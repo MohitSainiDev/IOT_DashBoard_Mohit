@@ -50,7 +50,7 @@ td {
   background-color: #ffcccc;
 }
 .critical {
-    background-color: #ffcccc; /* light red */
+    background-color: #ffcccc;
     color: #a10000;
     font-weight: bold;
 }
