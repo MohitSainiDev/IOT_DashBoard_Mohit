@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Health Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Machine Health Dashboard</h1>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Machine ID</th>
+                    <th>Timestamp</th>
+                    <th>Temperature (°C)</th>
+                    <th>Vibration (m/s²)</th>
+                    <th>Power (W)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+$(document).ready(function () {
+    function fetchData() {
+        $.get("/api/data", function (data) {
+            const tbody = $("#data-table tbody");
+            tbody.empty(); // Clear existing rows
+
+            data.forEach(item => {
+                let rowClass = "";
+                if (item.temperature > 90 || item.vibration > 0.05) {
+                    rowClass = "critical";
+                }
+
+                const row = `
+                    <tr class="${rowClass}">
+                        <td>${item.machine_id}</td>
+                        <td>${item.timestamp}</td>
+                        <td>${item.temperature.toFixed(2)}</td>
+                        <td>${item.vibration.toFixed(4)}</td>
+                        <td>${item.power.toFixed(2)}</td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        });
+    }
+
+    // Fetch data every 5 seconds
+    fetchData();
+    setInterval(fetchData, 5000);
+});
+</script>
+</body>
+</html>
